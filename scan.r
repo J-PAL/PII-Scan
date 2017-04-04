@@ -1,6 +1,9 @@
 # Activate the `foreign` library
 library(foreign)
 
+# Activate the `readstata13` library to read Stata dta-file that only works in version 13 and 14
+library(readstata13)
+
 # Create prinf function
 printf <- function(...) cat(sprintf(...))
 
@@ -28,8 +31,9 @@ for ( file in files ) {
   # Clear PII status
   PII_Found <- FALSE
   
-  # Open file, ignore missing value labels
+  # Open file, ignore missing value labels. Use read.dta if Stata version is <=12 and read.dta13 if >=13
   data <- read.dta(file, warn.missing.labels = FALSE)
+  data <- read.dta13(file, missing.type = FALSE)
   
   # Loop over variable names in file
   for ( var in names( data )) {
