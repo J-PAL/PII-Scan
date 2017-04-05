@@ -31,9 +31,16 @@ for ( file in files ) {
   # Clear PII status
   PII_Found <- FALSE
   
-  # Open file, ignore missing value labels. Use read.dta if Stata version is <=12 and read.dta13 if >=13
-  data <- read.dta(file, warn.missing.labels = FALSE)
-  data <- read.dta13(file, missing.type = FALSE)
+  # Open file, ignore missing value labels.
+  tryCatch(
+    {
+      data <- read.dta(file, warn.missing.labels = FALSE)
+    },
+    error=function(cond) {
+      data <- read.dta13(file, missing.type = FALSE)
+      return(NA)
+    }
+    )
   
   # Loop over variable names in file
   for ( var in names( data )) {
