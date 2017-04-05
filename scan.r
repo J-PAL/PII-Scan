@@ -17,7 +17,7 @@ pii_strings_other <- c("school", "social", "network", "census", "gender", "sex",
 pii_strings <- unique(c(pii_strings_names, pii_strings_dates, pii_strings_locations, pii_strings_other))
 
 # Set path to search for PII
-path <- "/Volumes/jpal/Global/Research/Projects"
+path <- "C:\\Users\\zacha\\Dropbox (MIT)\\_data_verification_pd\\472\\472_data"
 
 # Change to path
 setwd(path)
@@ -37,9 +37,14 @@ for ( file in files ) {
   
   # Loop over variable names in file
   for ( var in names( data )) {
-    
+    FOUND <- FALSE
+    for ( string in pii_strings) {
+      if (grepl(string, var)) {
+        FOUND <- TRUE
+      }
+    }
     # Check to see if variable name mataches our susspect list
-    if ( var %in% pii_strings ) {
+    if ( FOUND) {
       
       # Set PII status
       if ( !PII_Found) {
