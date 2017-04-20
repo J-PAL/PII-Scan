@@ -44,10 +44,10 @@ for ( file in files ) {
   # Open file, ignore missing value labels.
   tryCatch(
     {
-      data <- read.dta(file, warn.missing.labels = FALSE)
+      data <- read.dta13(file, missing.type = FALSE)
     },
     error=function(cond) {
-      data <- read.dta13(file, missing.type = FALSE)
+      data <- read.dta(file, warn.missing.labels = FALSE)
       return(NA)
     }
     )
