@@ -1,25 +1,33 @@
-# Activate the `foreign` library
-library(foreign)
+# List of required packages
+#   foreign: Read Stata version 5 – 12 files
+#   readstata13: Read Stata version 13 and 14 files
+#   read.sas7bdat: Read SAS files
+#   optparse: command line options/arguments
+packages = c("bob", "foreign","readstata13","sas7bdat","optparse")
 
-# Activate the `readstata13` library to read Stata dta-file that only works in version 13 and 14
-library(readstata13)
+# Suppress warnings
+oldw <- getOption("warn")
+options(warn = -1)
 
-# Activate the read.sas7bdat library
-library(sas7bdat)
+# Check for required packages
+package.check <- lapply(packages, FUN = function(x) {
+    if ((!require(x, character.only = TRUE, quietly = TRUE))) {
+      stop("Package ", x, " not found and is required.", call.=FALSE)
+    }
+})
 
-# Activate the optparse library for using command line options/arguments
-library("optparse")
+# Un-suppress warnings
+options(warn = oldw)
 
 # Set command line options
 option_list = list(
   make_option(c("-p", "--path"), type="character", default=NULL,
               help="search path", metavar="character")
 );
-
 opt_parser = OptionParser(option_list=option_list);
 opt = parse_args(opt_parser);
 
-# Make sure path is set
+# Make sure path is give as option
 if (is.null(opt$path)){
   print_help(opt_parser)
   stop("A search path must be specified.", call.=FALSE)
