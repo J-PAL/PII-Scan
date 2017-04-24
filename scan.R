@@ -3,7 +3,7 @@
 #   readstata13: Read Stata version 13 and 14 files
 #   read.sas7bdat: Read SAS files
 #   optparse: command line options/arguments
-packages = c("bob", "foreign","readstata13","sas7bdat","optparse")
+packages = c("foreign","readstata13","sas7bdat","optparse")
 
 # Suppress warnings
 oldw <- getOption("warn")
