@@ -4,7 +4,7 @@ Scan.R searches Stata .dta files and SAS files for variables that may contain Pe
 
 ## Instructions
 
-To execute the script, type the following in the command line, "Rscript scan.R --path=[Target]", replacing [Target] with the folder containing your data. An excel spreadsheet titled, "PII_output" will be saved in the target folder for your review.
+To execute the script, type the following in the command line, "Rscript scan.R --path=[Target]", replacing [Target] with the folder containing your data. An excel spreadsheet titled "PII_output" will be saved in the target folder for your review.
 
 ## Motivation
 
