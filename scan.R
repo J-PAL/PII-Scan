@@ -3,7 +3,8 @@
 #   readstata13: Read Stata version 13 and 14 files
 #   read.sas7bdat: Read SAS files
 #   optparse: command line options/arguments
-packages = c("bob", "foreign","readstata13","sas7bdat","optparse")
+#   tools: extract file extension
+packages = c("foreign","readstata13","sas7bdat","optparse")
 
 # Suppress warnings
 oldw <- getOption("warn")
@@ -52,8 +53,8 @@ pii_strings <- unique(c(pii_strings_names, pii_strings_dates, pii_strings_locati
 # Change to path
 setwd(path)
 
-# Get list of Stata files (.dta) to scan for PII
-files = list.files(path = ".", pattern = "\\.dta$", recursive = TRUE)
+# Get list of files (.dta or .sas7bdat) to scan for PII
+files = list.files(path = ".", pattern = "\\.dta$|\\.sas7bdat$", recursive = TRUE)
 
 # Initialize output csv
 cat("file,var,varlabel,samp1,samp2,samp3,samp4,samp5",file="PII_output.csv",sep="\n",append=FALSE)
@@ -64,20 +65,45 @@ for ( file in files ) {
   # Clear PII status
   PII_Found <- FALSE
 
-  # Open file, ignore missing value labels.
-  tryCatch(
-    {
-      data <- read.dta13(file, missing.type = FALSE)
-    },
-    error=function(cond) {
-      data <- read.dta(file, warn.missing.labels = FALSE)
-      return(NA)
-    }
-    )
+  # Initialize variable count
+  v <- 0
 
-    # Get variable labels and initialize variable count
-    var.labels <- attr(data,"var.labels")
-    v<-0
+  # Get file type
+  type <- file_ext(file)
+
+  # Use correct read function to open file, ignore missing value labels.
+  switch( type,
+
+    # Open Stata files
+    dta = {
+      print('dta')
+      tryCatch(
+        {
+          data <- read.dta13(file, missing.type = FALSE)
+        },
+        error=function(cond) {
+          data <- read.dta(file, warn.missing.labels = FALSE)
+          return(NA)
+        }
+      )
+
+      # Get variable labels
+      var.labels <- attr(data,"var.labels")
+    },
+
+    # Open SAS files
+    sas7bdat = {
+      print('sas7bdat')
+      data <- read.sas7bdat(file)
+      data_attr<-attributes(data)
+    },
+
+    # Warn and exit about unknown file types
+    {
+      printf("Unknown file type %s: %s\n", ext, file)
+      stop()
+    }
+  )
 
   # Loop over variable names in file
   for ( var in names( data )) {
@@ -90,18 +116,30 @@ for ( file in files ) {
 
      # Create in-loop variable that contains varlabel information, add 1 to variable count
      v<-v+1
-     varlab<-var.labels[v]
+     case( type,
+       dta = {
+         varlab<-var.labels[v]
+       },
+       sas7bdat = {
+         varlab<-data_attr$column.info[[v]]$label
+       },
+       {
+         printf("Unknown file type %s: %s\n", ext, file)
+         stop()
+       }
+     )
 
-    #if (length(grep(var,pii_strings))>0) {
-    #	FOUND<- TRUE
-    #}
-    # Check to see if variable name mataches our susspect list
-    if ( FOUND) {
+    if ( FOUND ) {
 
       # Set PII status
-      if ( !PII_Found) {
+      if ( !PII_Found ) {
         PII_Found <- TRUE
         printf("Possible PII found in %s:\n", file)
+      }
+
+      # Get variable label
+      if ( type == 'sas7bdat' ) {
+        data_attr$column.info[[v]]$label
       }
 
       # Print warning, and first five data values
@@ -122,64 +160,3 @@ for ( file in files ) {
     } # if ( var %in% pii_strings )
   } # for ( var in names( data ))
 } # for ( file in files )
-
-
-# Get list of SAS files (.sas7bdat) to scan for PII
-files2 = list.files(path = ".", pattern = "\\.sas7bdat$", recursive = TRUE)
-
-# Loop over files
-for ( file in files2 ) {
-
-  # Read data and get data attributes. Slightly more complicated than stata
-  data <- read.sas7bdat(file)
-  data_attr<-attributes(data)
-
-  # Clear PII status
-  PII_Found <- FALSE
-
-  # Initialize variable count
-  v<-0
-
-  # Loop over variable names in file
-  for ( var in names( data )) {
-    FOUND <- FALSE
-    for ( string in pii_strings) {
-      if (grepl(string, var)) {
-        FOUND <- TRUE
-      }
-    }
-
-     # Create in-loop variable that contains varlabel information, add 1 to variable count
-     v<-v+1
-     varlab<-data_attr$column.info[[v]]$label
-
-    # Check to see if variable name mataches our susspect list
-    if ( FOUND) {
-
-      # Set PII status
-      if ( !PII_Found) {
-        PII_Found <- TRUE
-        printf("Possible PII found in %s:\n", file)
-      }
-
-      # Get variable label
-      data_attr$column.info[[v]]$label
-
-      # Print warning, and first five data values
-      printf("\tPossible PII in variable \"%s\":\n", var)
-
-      # Print first five values
-      for ( i in 1:5 ) {
-        printf("\t\tRow %d value: %s\n", i, data[i,var])
-      } # for ( i in 1:5 )
-
-      # Print newline for readability
-      printf("\n")
-
-            # Write to csv file
-      cat(paste (file,var,varlab,data[1,var],data[2,var],data[3,var],data[4,var],
-      data[5,var], sep = ",", collapse = NULL),file="PII_output.csv",sep="\n",append=TRUE)
-
-    } # if ( var %in% pii_strings )
-  } # for ( var in names( data ))
-} # for ( file in files2 )
