@@ -4,7 +4,7 @@
 #   read.sas7bdat: Read SAS files
 #   optparse: command line options/arguments
 #   tools: extract file extension
-packages = c("foreign","readstata13","sas7bdat","optparse")
+packages = c("foreign","readstata13","sas7bdat","optparse","tools")
 
 # Suppress warnings
 oldw <- getOption("warn")
