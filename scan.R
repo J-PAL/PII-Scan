@@ -144,7 +144,6 @@ for (file in files) {
          
          # Open SAS files
          sas7bdat = {
-           print('sas7bdat')
            data <- read.sas7bdat(file)
            data_attr <- attributes(data)
          },
