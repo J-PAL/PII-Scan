@@ -158,7 +158,7 @@ for (file in files) {
   for (var in names(data)) {
     FOUND <- FALSE
     for (string in pii_strings) {
-      if (grepl(string, var)) {
+      if (grepl(string, var, ignore.case = TRUE)) {
         FOUND <- TRUE
       }
     }
