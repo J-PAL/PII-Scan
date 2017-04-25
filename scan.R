@@ -76,7 +76,6 @@ for ( file in files ) {
 
     # Open Stata files
     dta = {
-      print('dta')
       tryCatch(
         {
           data <- read.dta13(file, missing.type = FALSE)
@@ -116,7 +115,7 @@ for ( file in files ) {
 
      # Create in-loop variable that contains varlabel information, add 1 to variable count
      v<-v+1
-     case( type,
+     switch( type,
        dta = {
          varlab<-var.labels[v]
        },
