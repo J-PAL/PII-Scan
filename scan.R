@@ -120,8 +120,8 @@ for (file in files) {
   # Initialize variable count
   v <- 0
   
-  # Paste path and filename
-  file<-paste(path,"/",file,sep="")
+  # Create full path to file
+  file <- file.path(path,file)
   
   # Get file type
   type <- file_ext(file)
