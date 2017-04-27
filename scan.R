@@ -123,7 +123,7 @@ for (file in files) {
   # Create full path to file
   file <- file.path(path,file)
   
-  # Get absoulte path to file for cleaner output
+  # Get absolute path to file for cleaner output
   file <- normalizePath(file)
   
   # Get file type
