@@ -1,6 +1,6 @@
 ## Synopsis
 
-Scan.R searches Stata .dta files and SAS files for variables that may contain Personally-identifiable information (PII). It uses a vector of strings that commonly appear as part of variable names or labels that contain PII. Scan.r searches all .dta and SAS files in the specified folder and outputs an excel spreadsheet of variables and data flagged as potential PII (by .dta file).
+Scan.R searches Stata .dta, SAS, and .csv files for variables that may contain personally identifiable information (PII). It uses a vector of strings that commonly appear as part of variable names or labels that contain PII. (Note: Scan.r does not search labels in .csv files.) Scan.r searches all .dta, SAS, and .csv files in the specified folder and outputs an excel spreadsheet of variables and data flagged as potential PII.
 
 ## Instructions
 
