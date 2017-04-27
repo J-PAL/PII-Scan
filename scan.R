@@ -31,6 +31,13 @@ option_list = list(
     default = NULL,
     help = "Path to search for PII",
     metavar = "PATH"
+  ),
+  make_option(
+    c("-s", "--strict"),
+    type = "logical",
+    action="store_true",
+    default = FALSE,
+    help = "Use stric matching when comparing strings. For example, match 'lat' but not 'latin'."
   )
 )
 
@@ -47,6 +54,9 @@ if (is.null(opt$path)) {
 
 # Set path
 path = opt$path
+
+# Set strict
+strict = opt$strict
 
 # Create prinf function
 printf <- function(...)
@@ -167,6 +177,13 @@ for (file in files) {
   for (var in names(data)) {
     FOUND <- FALSE
     for (string in pii_strings) {
+      
+      # Match on word boundary if strict
+      if (strict) {
+        string <- paste("\b",string,"\b")
+      }
+      
+      # Compare string to var, ignoring case
       if (grepl(string, var, ignore.case = TRUE)) {
         FOUND <- TRUE
       }
