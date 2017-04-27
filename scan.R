@@ -120,8 +120,11 @@ for (file in files) {
   # Initialize variable count
   v <- 0
   
-  # Paste path and filename
-  file1<-paste(path,"/",file,sep="")
+  # Create full path to file
+  file <- file.path(path,file)
+  
+  # Get absolute path to file for cleaner output
+  file <- normalizePath(file)
   
   # Get file type
   type <- file_ext(file)
@@ -132,10 +135,10 @@ for (file in files) {
          # Open Stata files
          dta = {
            tryCatch({
-             data <- read.dta13(file1, missing.type = FALSE)
+             data <- read.dta13(file, missing.type = FALSE)
            },
            error = function(cond) {
-             data <- read.dta(file1, warn.missing.labels = FALSE)
+             data <- read.dta(file, warn.missing.labels = FALSE)
              return(NA)
            })
            
@@ -145,13 +148,13 @@ for (file in files) {
          
          # Open SAS files
          sas7bdat = {
-           data <- read.sas7bdat(file1)
+           data <- read.sas7bdat(file)
            data_attr <- attributes(data)
          },
          
          # Open CSV files
          csv = {
-         	data <- read.csv(file1, header=TRUE, sep=",")         	
+         	data <- read.csv(file, header=TRUE, sep=",")         	
          },
          
          # Warn and exit about unknown file types
