@@ -15,6 +15,43 @@ To execute the script, type the following in the command line, "Rscript scan.R -
 
 The script was written to audit data files for personally identifiable information. It provides a solution to quickly searching a large number of files in a particular directory or searching files that contain a large number of variables. However, it does not fully replace manual detection of PII.
 
+## Search Strings
+
+scan.R searchs variables and labels for the following strings:
+* name
+* fname
+* lname
+* first_name
+* last_name
+* birth
+* birthday
+* bday
+* district
+* country
+* subcountry
+* parish
+* lc
+* village
+* community
+* address
+* gps
+* lat
+* log
+* coord
+* location
+* house
+* compound
+* school
+* social
+* network
+* census
+* gender
+* sex
+* fax
+* email
+* url
+* child
+
 ## Support
 
 Please use the [issue tracker](https://github.com/J-PAL/PII-Scan/issues) for all support requests.
