@@ -13,7 +13,11 @@ To execute the script, type the following in the command line, "Rscript scan.R -
 
 ## Motivation
 
-The script was written to quickly audit data files for personally identifiable information. It provides a solution to searching a large number of files in a particular directory or searching files that contain a large number of variables. However, it does not fully replace manual detection of PII. 
+The script was written to quickly audit data files for personally identifiable information. It provides a solution to searching a large number of files in a particular directory or searching files that contain a large number of variables. However, it does not fully replace manual detection of PII.
+
+## Support
+
+Please use the [issue tracker](https://github.com/J-PAL/PII-Scan/issues) for all support requests.
 
 ## License
 
