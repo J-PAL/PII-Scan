@@ -17,7 +17,7 @@ The script was written to audit data files for personally identifiable informati
 
 ## Search Strings
 
-scan.R searchs variables and labels for the following strings:
+scan.R searches variables and labels for the following strings:
 * name
 * fname
 * lname
