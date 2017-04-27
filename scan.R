@@ -29,12 +29,12 @@ option_list = list(
     c("-p", "--path"),
     type = "character",
     default = NULL,
-    help = "search path",
-    metavar = "character"
+    help = "Path to search for PII",
+    metavar = "PATH"
   )
 )
 
-opt_parser = OptionParser(option_list = option_list)
+opt_parser = OptionParser(usage = "usage: %prog --path PATH [options]", option_list = option_list)
 
 opt = parse_args(opt_parser)
 
