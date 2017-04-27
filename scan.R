@@ -98,12 +98,10 @@ pii_strings <-
     pii_strings_other
   ))
 
-# Change to path
-setwd(path)
 
 # Get list of files (.dta or .sas7bdat) to scan for PII
-files = list.files(path = ".",
-                   pattern = "\\.dta$|\\.sas7bdat$",
+files = list.files(path,
+                   pattern = "\\.dta$|\\.sas7bdat$|\\.csv$",
                    recursive = TRUE)
 
 # Initialize output csv
@@ -122,6 +120,9 @@ for (file in files) {
   # Initialize variable count
   v <- 0
   
+  # Paste path and filename
+  file1<-paste(path,"/",file,sep="")
+  
   # Get file type
   type <- file_ext(file)
   
@@ -131,10 +132,10 @@ for (file in files) {
          # Open Stata files
          dta = {
            tryCatch({
-             data <- read.dta13(file, missing.type = FALSE)
+             data <- read.dta13(file1, missing.type = FALSE)
            },
            error = function(cond) {
-             data <- read.dta(file, warn.missing.labels = FALSE)
+             data <- read.dta(file1, warn.missing.labels = FALSE)
              return(NA)
            })
            
@@ -144,8 +145,13 @@ for (file in files) {
          
          # Open SAS files
          sas7bdat = {
-           data <- read.sas7bdat(file)
+           data <- read.sas7bdat(file1)
            data_attr <- attributes(data)
+         },
+         
+         # Open CSV files
+         csv = {
+         	data <- read.csv(file1, header=TRUE, sep=",")         	
          },
          
          # Warn and exit about unknown file types
@@ -171,6 +177,9 @@ for (file in files) {
            },
            sas7bdat = {
              varlab <- data_attr$column.info[[v]]$label
+           },
+           csv ={
+           	 varlab <- "N/A"
            },
            {
              printf("Unknown file type %s: %s\n", ext, file)
