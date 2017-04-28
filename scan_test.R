@@ -9,7 +9,13 @@
 #   readr::read_csv Read csv files
 #   optparse: command line options/arguments
 #   tools: extract file extension
-packages = c("haven", "foreign", "data.table", "readr", "optparse", "tools")
+packages = c("haven",
+             "foreign",
+             "readr", 
+             "dplyr",
+             "purrr",
+             "optparse", 
+             "tools")
 
 # Suppress warnings
 oldw <- getOption("warn")
@@ -53,7 +59,7 @@ if (is.null(opt$path)) {
 # Set path
 path = opt$path
 
-# Create prinf function
+# Create printf function
 printf <- function(...)
   cat(sprintf(...))
 
@@ -137,43 +143,50 @@ for (file in files) {
   # Use correct read function to open file, ignore missing value labels.
   switch(type,
          
-         # Open Stata files
+         # Open Stata files (haven for Stata 8+, foreign for Stata 5-7)
          dta = {
            tryCatch({
              data <- haven::read_dta(file)
+             cols <- attr(data, "names")
+             var.labels <- data %>% 
+               map_at(cols, attr, "label")
            },
            error = function(cond) {
              data <- foreign::read.dta(file, warn.missing.labels = FALSE)
+             var.labels <- attr(data, "var.labels")
              return(NA)
            })
-           
-           # Get variable labels
-           var.labels <- attr(data, "var.labels")
-         },
+         },           
          
          # Open SAS files
          sas7bdat = {
            data <- haven::read_sas(file)
-           data_attr <- attributes(data)
+           cols <- attr(data, "names")
+           var.labels <- cols # SAS variables are unlabelled
+           
          },
          
          # Open SPSS files
-         # sav = {
-         #   data <- haven::read_spss(file)
-         #   data_attr <- attributes(data)
-         # },
+         sav = {
+           data <- haven::read_spss(file)
+           cols <- attr(data, "names")
+           var.labels <- data %>% 
+             map_at(cols, attr, "label")
+         },
          
          # Open CSV files
          csv = {
          	data <- readr::read_csv(file, col_names = TRUE)
-         	# data <- data.table::fread(file, header=TRUE, sep="auto")
+         	cols <- attr(data, "names")
+         	var.labels <- cols
          },
          
-         # Warn and exit about unknown file types
+         # Warn about unknown file types
          {
            printf("Unknown file type %s: %s\n", type, file)
            # stop()
-         })
+         }
+         )
   
   # Loop over variable names in file
   for (var in names(data)) {
@@ -191,14 +204,17 @@ for (file in files) {
              varlab <- var.labels[v]
            },
            sas7bdat = {
-             varlab <- data_attr$column.info[[v]]$label
+             varlab <- var.labels[v]
+           },
+           sav = {
+             varlab <- var.labels[v]
            },
            csv ={
-           	 varlab <- "N/A"
+           	 varlab <- var.labels[v]
            },
            {
              printf("Unknown file type %s: %s\n", type, file)
-             stop()
+             # stop()
            })
     
     if (FOUND) {
@@ -206,11 +222,6 @@ for (file in files) {
       if (!PII_Found) {
         PII_Found <- TRUE
         printf("Possible PII found in %s:\n", file)
-      }
-      
-      # Get variable label
-      if (type == 'sas7bdat') {
-        data_attr$column.info[[v]]$label
       }
       
       # Print warning, and first five data values
