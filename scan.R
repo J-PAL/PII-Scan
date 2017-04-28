@@ -1,10 +1,18 @@
 # List of required packages
-#   foreign: Read Stata version 5 – 12 files
-#   readstata13: Read Stata version 13 and 14 files
-#   read.sas7bdat: Read SAS files
+#   foreign: Read Stata version 5 - 12 files
+#   haven::read_dta Read Stata version 8 - 14 files
+#   haven::read_sas Read SAS files (sas7bdat files and accompanying)
+#   haven::read_sav Read SPSS files (sas7bdat files and accompanying)
+#   readr::read_csv Read csv files
 #   optparse: command line options/arguments
 #   tools: extract file extension
-packages = c("foreign", "readstata13", "sas7bdat", "optparse", "tools")
+packages = c("haven",
+             "foreign",
+             "readr",
+             "dplyr",
+             "purrr",
+             "optparse",
+             "tools")
 
 # Suppress warnings
 oldw <- getOption("warn")
@@ -116,22 +124,22 @@ cat(
 for (file in files) {
   # Clear PII status
   PII_Found <- FALSE
-  
+
   # Initialize variable count
   v <- 0
-  
+
   # Create full path to file
   file <- file.path(path,file)
-  
+
   # Get absolute path to file for cleaner output
   file <- normalizePath(file)
-  
+
   # Get file type
   type <- file_ext(file)
-  
+
   # Use correct read function to open file, ignore missing value labels.
   switch(type,
-         
+
          # Open Stata files
          dta = {
            tryCatch({
@@ -141,28 +149,28 @@ for (file in files) {
              data <- read.dta(file, warn.missing.labels = FALSE)
              return(NA)
            })
-           
+
            # Get variable labels
            var.labels <- attr(data, "var.labels")
          },
-         
+
          # Open SAS files
          sas7bdat = {
            data <- read.sas7bdat(file)
            data_attr <- attributes(data)
          },
-         
+
          # Open CSV files
          csv = {
-         	data <- read.csv(file, header=TRUE, sep=",")         	
+         	data <- read.csv(file, header=TRUE, sep=",")
          },
-         
+
          # Warn and exit about unknown file types
          {
            printf("Unknown file type %s: %s\n", ext, file)
            stop()
          })
-  
+
   # Loop over variable names in file
   for (var in names(data)) {
     FOUND <- FALSE
@@ -171,7 +179,7 @@ for (file in files) {
         FOUND <- TRUE
       }
     }
-    
+
     # Create in-loop variable that contains varlabel information, add 1 to variable count
     v <- v + 1
     switch(type,
@@ -188,30 +196,30 @@ for (file in files) {
              printf("Unknown file type %s: %s\n", ext, file)
              stop()
            })
-    
+
     if (FOUND) {
       # Set PII status
       if (!PII_Found) {
         PII_Found <- TRUE
         printf("Possible PII found in %s:\n", file)
       }
-      
+
       # Get variable label
       if (type == 'sas7bdat') {
         data_attr$column.info[[v]]$label
       }
-      
+
       # Print warning, and first five data values
       printf("\tPossible PII in variable \"%s\":\n", var)
-      
+
       # Print first five values
       for (i in 1:5) {
         printf("\t\tRow %d value: %s\n", i, data[i, var])
       } # for ( i in 1:5 )
-      
+
       # Print newline for readability
       printf("\n")
-      
+
       # Write to csv file
       cat(
         paste (
@@ -230,7 +238,7 @@ for (file in files) {
         sep = "\n",
         append = TRUE
       )
-      
+
     } # if ( var %in% pii_strings )
   } # for ( var in names( data ))
 } # for ( file in files )
