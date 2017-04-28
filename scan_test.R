@@ -197,7 +197,7 @@ for (file in files) {
            	 varlab <- "N/A"
            },
            {
-             printf("Unknown file type %s: %s\n", ext, file)
+             printf("Unknown file type %s: %s\n", type, file)
              stop()
            })
     
