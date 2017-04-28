@@ -143,10 +143,15 @@ for (file in files) {
          # Open Stata files
          dta = {
            tryCatch({
-             data <- read.dta13(file, missing.type = FALSE)
+             data <- haven::read_dta(file)
+             cols <- attr(data, "names")
+             var.labels <- data %>%
+               map_at(cols, attr, "label")
            },
            error = function(cond) {
-             data <- read.dta(file, warn.missing.labels = FALSE)
+             data <- foreign::read.dta(file, warn.missing.labels = FALSE)
+             cols <- attr(data, "names")
+             var.labels <- attr(data, "var.labels")
              return(NA)
            })
 
