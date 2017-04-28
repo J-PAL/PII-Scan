@@ -151,11 +151,11 @@ for (file in files) {
            var.labels <- attr(data, "var.labels")
          },
          
-         # Open SAS files
-         sas7bdat = {
-           data <- haven::read_sas(file)
-           data_attr <- attributes(data)
-         },
+         # # Open SAS files
+         # sas7bdat = {
+         #   data <- haven::read_sas(file)
+         #   data_attr <- attributes(data)
+         # },
          
          # Open SPSS files
          sav = {
