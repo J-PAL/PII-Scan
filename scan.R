@@ -159,7 +159,7 @@ for (file in files) {
          sas7bdat = {
            data <- haven::read_sas(file)
            cols <- attr(data, "names")
-           var.labels <- cols # SAS variables are unlabelled
+           var.labels <- cols
          },
 
          # Open SPSS files
