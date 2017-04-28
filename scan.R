@@ -109,7 +109,7 @@ pii_strings <-
 
 # Get list of files (.dta or .sas7bdat) to scan for PII
 files = list.files(path,
-                   pattern = "\\.dta$|\\.sas7bdat$|\\.csv$",
+                   pattern = "\\.dta$|\\.sas7bdat$|\\.sav$|\\.csv$",
                    recursive = TRUE)
 
 # Initialize output csv
@@ -162,6 +162,14 @@ for (file in files) {
            var.labels <- cols # SAS variables are unlabelled
          },
 
+         # Open SPSS files
+         sav = {
+           data <- haven::read_spss(file)
+           cols <- attr(data, "names")
+           var.labels <- data %>%
+             map_at(cols, attr, "label")
+         },
+
          # Open CSV files
          csv = {
          	data <- read.csv(file, header=TRUE, sep=",")
@@ -189,6 +197,9 @@ for (file in files) {
              varlab <- var.labels[v]
            },
            sas7bdat = {
+             varlab <- var.labels[v]
+           },
+           sav = {
              varlab <- var.labels[v]
            },
            csv ={
