@@ -172,7 +172,9 @@ for (file in files) {
 
          # Open CSV files
          csv = {
-         	data <- read.csv(file, header=TRUE, sep=",")
+           data <- readr::read_csv(file, col_names = TRUE)
+           cols <- attr(data, "names")
+           var.labels <- cols
          },
 
          # Warn and exit about unknown file types
@@ -203,7 +205,7 @@ for (file in files) {
              varlab <- var.labels[v]
            },
            csv ={
-           	 varlab <- "N/A"
+           	 varlab <- var.labels[v]
            },
            {
              printf("Unknown file type %s: %s\n", ext, file)
