@@ -153,6 +153,7 @@ for (file in files) {
            },
            error = function(cond) {
              data <- foreign::read.dta(file, warn.missing.labels = FALSE)
+             cols <- attr(data, "names")
              var.labels <- attr(data, "var.labels")
              return(NA)
            })
