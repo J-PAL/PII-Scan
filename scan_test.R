@@ -1,11 +1,8 @@
 # List of required packages
 #   foreign: Read Stata version 5 - 12 files
-#   readstata13: Read Stata version 13 and 14 files
 #   haven::read_dta Read Stata version 8 - 14 files
 #   haven::read_sas Read SAS files (sas7bdat files and accompanying)
-#   read.sas7bdat: Read SAS files
 #   haven::read_sav Read SPSS files (sas7bdat files and accompanying)
-#   data.table::fread Read csv files
 #   readr::read_csv Read csv files
 #   optparse: command line options/arguments
 #   tools: extract file extension
