@@ -157,7 +157,7 @@ for (file in files) {
            data_attr <- attributes(data)
          },
          
-         # # Open SPSS files
+         # Open SPSS files
          # sav = {
          #   data <- haven::read_spss(file)
          #   data_attr <- attributes(data)
@@ -172,7 +172,7 @@ for (file in files) {
          # Warn and exit about unknown file types
          {
            printf("Unknown file type %s: %s\n", ext, file)
-           stop()
+           # stop()
          })
   
   # Loop over variable names in file
