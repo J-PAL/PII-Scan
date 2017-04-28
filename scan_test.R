@@ -165,7 +165,7 @@ for (file in files) {
          
          # Open CSV files
          csv = {
-         	data <- readr::read_csv(file, header=TRUE, sep="auto")
+         	data <- readr::read_csv(file, col_names = TRUE)
          	# data <- data.table::fread(file, header=TRUE, sep="auto")
          },
          
