@@ -106,7 +106,7 @@ pii_strings <-
 
 # Get list of files (.dta, .sas7bdat, .sav, and .csv) to scan for PII
 files = list.files(path,
-                   pattern = "\\.dta$|\\.sas7bdat$|\\.sav$|\\.csv$",
+                   pattern = "\\.dta$|\\.sas7bdat$|\\.csv$",
                    recursive = TRUE)
 
 # Initialize output csv
