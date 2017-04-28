@@ -72,7 +72,9 @@ pii_strings_locations <-
     "coord",
     "location",
     "house",
-    "compound"
+    "compound",
+    "panchayat"
+
   )
 pii_strings_other <-
   c(
@@ -85,7 +87,12 @@ pii_strings_other <-
     "fax",
     "email",
     "url",
-    "child"
+    "child",
+    "beneficiary",
+    "mother",
+    "wife",
+    "father",
+    "husband"
   )
 # removed "ip"
 
