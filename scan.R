@@ -155,14 +155,11 @@ for (file in files) {
              return(NA)
            })
 
-           # Get variable labels
-           var.labels <- attr(data, "var.labels")
-         },
-
          # Open SAS files
          sas7bdat = {
-           data <- read.sas7bdat(file)
-           data_attr <- attributes(data)
+           data <- haven::read_sas(file)
+           cols <- attr(data, "names")
+           var.labels <- cols # SAS variables are unlabelled
          },
 
          # Open CSV files
@@ -192,7 +189,7 @@ for (file in files) {
              varlab <- var.labels[v]
            },
            sas7bdat = {
-             varlab <- data_attr$column.info[[v]]$label
+             varlab <- var.labels[v]
            },
            csv ={
            	 varlab <- "N/A"
@@ -207,11 +204,6 @@ for (file in files) {
       if (!PII_Found) {
         PII_Found <- TRUE
         printf("Possible PII found in %s:\n", file)
-      }
-
-      # Get variable label
-      if (type == 'sas7bdat') {
-        data_attr$column.info[[v]]$label
       }
 
       # Print warning, and first five data values
