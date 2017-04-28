@@ -154,6 +154,8 @@ for (file in files) {
              var.labels <- attr(data, "var.labels")
              return(NA)
            })
+           
+         },
 
          # Open SAS files
          sas7bdat = {
