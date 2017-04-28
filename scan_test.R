@@ -171,7 +171,7 @@ for (file in files) {
          
          # Warn and exit about unknown file types
          {
-           printf("Unknown file type %s: %s\n", ext, file)
+           printf("Unknown file type %s: %s\n", type, file)
            # stop()
          })
   
