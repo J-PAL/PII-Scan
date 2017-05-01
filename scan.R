@@ -239,13 +239,12 @@ for (file in files) {
       # Compare string to var, ignoring case
       if (grepl(string, var, ignore.case = TRUE)) {
         FOUND <- TRUE
+      } else {
+        # If no possible PII found in variable name, check label, ignoring case
+        if (grepl(string, varlab, ignore.case = TRUE)) {
+          FOUND <- TRUE
+        }
       }
-      
-      # Compare string to varlab, ignoring case
-      if (grepl(string, varlab, ignore.case = TRUE)) {
-        FOUND <- TRUE
-      }
-      
     }
 
     if (FOUND) {
