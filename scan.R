@@ -67,6 +67,9 @@ path = opt$path
 # Set strict
 strict = opt$strict
 
+# Set PII status
+PII_Found <- FALSE
+
 # Create prinf function
 printf <- function(...)
   cat(sprintf(...))
@@ -140,8 +143,6 @@ cat(
 
 # Loop over files
 for (file in files) {
-  # Clear PII status
-  PII_Found <- FALSE
 
   # Initialize variable count
   v <- 0
@@ -240,11 +241,8 @@ for (file in files) {
            })
 
     if (FOUND) {
-      # Set PII status
-      if (!PII_Found) {
-        PII_Found <- TRUE
-        printf("Possible PII found in %s:\n", file)
-      }
+      PII_Found <- TRUE
+      printf("Possible PII found in %s:\n", file)
 
       # Print warning, and first five data values
       printf("\tPossible PII in variable \"%s\":\n", var)
@@ -279,3 +277,9 @@ for (file in files) {
     } # if ( var %in% pii_strings )
   } # for ( var in names( data ))
 } # for ( file in files )
+
+if ( PII_Found ) {
+  quit(save = "no", status = 10, runLast = FALSE)
+} else {
+  quit(save = "no", status = 0, runLast = FALSE)
+}
