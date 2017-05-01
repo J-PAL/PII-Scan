@@ -22,7 +22,8 @@ options(warn = -1)
 package.check <- lapply(
   packages,
   FUN = function(x) {
-    if ((!require(x, character.only = TRUE, quietly = TRUE))) {
+    if ((!require(x, character.only = TRUE, quietly = TRUE, 
+                  warn.conflicts = FALSE))) {
       stop("Package ", x, " not found and is required.", call. = FALSE)
     }
   }
@@ -191,7 +192,7 @@ for (file in files) {
 
          # Open CSV files
          csv = {
-           data <- readr::read_csv(file, col_names = TRUE)
+           data <- readr::read_csv(file, col_names = TRUE, col_types = cols())
            cols <- attr(data, "names")
            var.labels <- cols
          },
