@@ -140,8 +140,6 @@ cat(
 
 # Loop over files
 for (file in files) {
-  # Clear PII status
-  PII_Found <- FALSE
 
   # Initialize variable count
   v <- 0
@@ -248,11 +246,8 @@ for (file in files) {
     }
 
     if (FOUND) {
-      # Set PII status
-      if (!PII_Found) {
-        PII_Found <- TRUE
-        printf("Possible PII found in %s:\n", file)
-      }
+      printf("Possible PII found in %s:\n", file)
+
 
       # Print warning, and first five data values
       printf("\tPossible PII in variable \"%s\":\n", var)
