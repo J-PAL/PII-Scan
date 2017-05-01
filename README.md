@@ -9,7 +9,7 @@ To execute the script, type the following in the command line, "Rscript scan.R -
 ## Requirements
 
 * R must be installed on the local system. Installers can be downloaded at http://cran.us.r-project.org.
-* The readstata13, sas7bdat, optparse, tools and foreign packages are required. To install missing packages, run install.packages("PACKAGE_NAME") where PACKAGE_NAME is the name of the package to install. Scan.R will warn if any of these packages are missing.
+* The haven, foreign, readr, dplyr, readstata13, purrr, optparse and tools packages are required. To install missing packages, run install.packages("PACKAGE_NAME") where PACKAGE_NAME is the name of the package to install. Scan.R will warn if any of these packages are missing.
 
 ## Motivation
 
