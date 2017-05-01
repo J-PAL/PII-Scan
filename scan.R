@@ -46,7 +46,7 @@ option_list = list(
     type = "logical",
     action="store_true",
     default = FALSE,
-    help = "Silent operation; do not diplay possible PII to the screen."
+    help = "Silent operation; do not diplay possible PII to the screen"
   ),
   make_option(
     "--no-output",
@@ -54,14 +54,14 @@ option_list = list(
     type = "logical",
     action="store_true",
     default = FALSE,
-    help = "Do not output search results to csv file."
+    help = "Do not output search results to csv file"
   ),
   make_option(
     c("-s", "--strict"),
     type = "logical",
     action="store_true",
     default = FALSE,
-    help = "Use stric matching when comparing strings. For example, match 'lat' but not 'latin'."
+    help = "Use stric matching when comparing strings. For example, match 'lat' but not 'latin'"
   )
 )
 
