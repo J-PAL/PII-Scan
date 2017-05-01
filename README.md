@@ -11,6 +11,9 @@ To execute the script, type the following in the command line, "Rscript scan.R -
 * R must be installed on the local system. Installers can be downloaded at http://cran.us.r-project.org.
 * The haven, foreign, readr, dplyr, readstata13, purrr, optparse and tools packages are required. To install missing packages, run install.packages("PACKAGE_NAME") where PACKAGE_NAME is the name of the package to install. Scan.R will warn if any of these packages are missing.
 
+## Exit Codes
+scan.R will exit with a value of 10 (ten) when possible PII is found or a value of 0 (zero) when no PII is identified.
+
 ## Motivation
 
 The script was written to audit data files for personally identifiable information. It provides a solution to quickly searching a large number of files in a particular directory or searching files that contain a large number of variables. However, it does not fully replace manual detection of PII.
@@ -62,4 +65,3 @@ See license file.
 
 ## Thanks
 Special thanks to IPA for their [How to Search Datasets for Personally Identifiable Information](http://www.poverty-action.org/sites/default/files/Guideline_How-to-Search-Datasets-for-PII.pdf) document which inspired this project.
-
