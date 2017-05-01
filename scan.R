@@ -42,6 +42,13 @@ option_list = list(
     metavar = "PATH"
   ),
   make_option(
+    c("-q", "--quiet"),
+    type = "logical",
+    action="store_true",
+    default = FALSE,
+    help = "Silent operation; do not diplay possible PII to the screen."
+  ),
+  make_option(
     c("-s", "--strict"),
     type = "logical",
     action="store_true",
@@ -64,8 +71,9 @@ if (is.null(opt$path)) {
 # Set path
 path = opt$path
 
-# Set strict
+# Set options
 strict = opt$strict
+quiet = opt$quiet
 
 # Set PII status
 PII_Found <- FALSE
@@ -242,18 +250,18 @@ for (file in files) {
 
     if (FOUND) {
       PII_Found <- TRUE
-      printf("Possible PII found in %s:\n", file)
+      if (!quiet) printf("Possible PII found in %s:\n", file)
 
       # Print warning, and first five data values
-      printf("\tPossible PII in variable \"%s\":\n", var)
+      if (!quiet) printf("\tPossible PII in variable \"%s\":\n", var)
 
       # Print first five values
       for (i in 1:5) {
-        printf("\t\tRow %d value: %s\n", i, data[i, var])
+        if (!quiet) printf("\t\tRow %d value: %s\n", i, data[i, var])
       } # for ( i in 1:5 )
 
       # Print newline for readability
-      printf("\n")
+      if (!quiet) printf("\n")
 
       # Write to csv file
       cat(
