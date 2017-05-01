@@ -191,7 +191,7 @@ for (file in files) {
 
          # Open CSV files
          csv = {
-           data <- readr::read_csv(file, col_names = TRUE)
+           data <- readr::read_csv(file, col_names = TRUE, col_types = cols())
            cols <- attr(data, "names")
            var.labels <- cols
          },
