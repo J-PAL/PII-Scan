@@ -49,6 +49,14 @@ option_list = list(
     help = "Silent operation; do not diplay possible PII to the screen."
   ),
   make_option(
+    "--no-output",
+    dest = "nooutput",
+    type = "logical",
+    action="store_true",
+    default = FALSE,
+    help = "Do not output search results to csv file."
+  ),
+  make_option(
     c("-s", "--strict"),
     type = "logical",
     action="store_true",
@@ -60,7 +68,6 @@ option_list = list(
 opt_parser = OptionParser(usage = "usage: %prog --path PATH [options]", option_list = option_list)
 
 opt = parse_args(opt_parser)
-
 
 # Make sure path is give as option
 if (is.null(opt$path)) {
@@ -74,6 +81,7 @@ path = opt$path
 # Set options
 strict = opt$strict
 quiet = opt$quiet
+outputCSV = !opt$nooutput
 
 # Set PII status
 PII_Found <- FALSE
@@ -142,7 +150,7 @@ files = list.files(path,
                    recursive = TRUE)
 
 # Initialize output csv
-cat(
+if (outputCSV) cat(
   "file,var,varlabel,samp1,samp2,samp3,samp4,samp5",
   file = "PII_output.csv",
   sep = "\n",
@@ -264,7 +272,7 @@ for (file in files) {
       if (!quiet) printf("\n")
 
       # Write to csv file
-      cat(
+      if (outputCSV) cat(
         paste (
           file,
           var,
