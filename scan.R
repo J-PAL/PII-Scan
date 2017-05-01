@@ -22,7 +22,8 @@ options(warn = -1)
 package.check <- lapply(
   packages,
   FUN = function(x) {
-    if ((!require(x, character.only = TRUE, quietly = TRUE))) {
+    if ((!require(x, character.only = TRUE, quietly = TRUE, 
+                  warn.conflicts = FALSE))) {
       stop("Package ", x, " not found and is required.", call. = FALSE)
     }
   }
