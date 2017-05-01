@@ -57,6 +57,14 @@ option_list = list(
     help = "Do not output search results to csv file"
   ),
   make_option(
+    c("-o", "--output-file"),
+    dest = "outputfile",
+    type = "character",
+    default = "PII_output.csv",
+    metavar = "FILE",
+    help = "Write csv of possible PII to FILE [default: %default]"
+  ),
+  make_option(
     c("-s", "--strict"),
     type = "logical",
     action="store_true",
@@ -82,6 +90,7 @@ path = opt$path
 strict = opt$strict
 quiet = opt$quiet
 outputCSV = !opt$nooutput
+outputfile = opt$outputfile
 
 # Set PII status
 PII_Found <- FALSE
@@ -152,7 +161,7 @@ files = list.files(path,
 # Initialize output csv
 if (outputCSV) cat(
   "file,var,varlabel,samp1,samp2,samp3,samp4,samp5",
-  file = "PII_output.csv",
+  file = outputfile,
   sep = "\n",
   append = FALSE
 )
@@ -285,7 +294,7 @@ for (file in files) {
           sep = ",",
           collapse = NULL
         ),
-        file = "PII_output.csv",
+        file = outputfile,
         sep = "\n",
         append = TRUE
       )
