@@ -206,21 +206,11 @@ for (file in files) {
   # Loop over variable names in file
   for (var in names(data)) {
     FOUND <- FALSE
-    for (string in pii_strings) {
-      
-      # Match on word boundary if strict
-      if (strict) {
-        string <- paste("\b",string,"\b")
-      }
-      
-      # Compare string to var, ignoring case
-      if (grepl(string, var, ignore.case = TRUE)) {
-        FOUND <- TRUE
-      }
-    }
-
-    # Create in-loop variable that contains varlabel information, add 1 to variable count
+    
+    # Variable count for var.labels index
     v <- v + 1
+    
+    # Get label for variable by type
     switch(type,
            dta = {
              varlab <- var.labels[v]
@@ -232,12 +222,31 @@ for (file in files) {
              varlab <- var.labels[v]
            },
            csv ={
-           	 varlab <- var.labels[v]
+             varlab <- var.labels[v]
            },
            {
              printf("Unknown file type %s: %s\n", ext, file)
              stop()
            })
+    
+    for (string in pii_strings) {
+      
+      # Match on word boundary if strict
+      if (strict) {
+        string <- paste("\b",string,"\b")
+      }
+      
+      # Compare string to var, ignoring case
+      if (grepl(string, var, ignore.case = TRUE)) {
+        FOUND <- TRUE
+      }
+      
+      # Compare string to varlab, ignoring case
+      if (grepl(string, varlab, ignore.case = TRUE)) {
+        FOUND <- TRUE
+      }
+      
+    }
 
     if (FOUND) {
       # Set PII status
