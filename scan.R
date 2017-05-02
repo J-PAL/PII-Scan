@@ -76,6 +76,9 @@ path = opt$path
 strict = opt$strict
 scan_labels = opt$scanlables
 
+# Set PII status
+PII_Found <- FALSE
+
 # Create prinf function
 printf <- function(...)
   cat(sprintf(...))
@@ -246,7 +249,7 @@ for (file in files) {
       # Compare string to var, ignoring case
       if (grepl(string, var, ignore.case = TRUE)) {
         FOUND <- TRUE
-      } else if (scanlables) {
+      } else if (scan_labels) {
         # If no possible PII found in variable name, check label, ignoring case
         if (grepl(string, varlab, ignore.case = TRUE)) {
           FOUND <- TRUE
@@ -255,8 +258,8 @@ for (file in files) {
     }
 
     if (FOUND) {
+      PII_Found <- TRUE
       printf("Possible PII found in %s:\n", file)
-
 
       # Print warning, and first five data values
       printf("\tPossible PII in variable \"%s\":\n", var)
@@ -291,3 +294,9 @@ for (file in files) {
     } # if ( var %in% pii_strings )
   } # for ( var in names( data ))
 } # for ( file in files )
+
+if ( PII_Found ) {
+  quit(save = "no", status = 10, runLast = FALSE)
+} else {
+  quit(save = "no", status = 0, runLast = FALSE)
+}
