@@ -47,6 +47,14 @@ option_list = list(
     action="store_true",
     default = FALSE,
     help = "Use stric matching when comparing strings. For example, match 'lat' but not 'latin'."
+  ),
+  make_option(
+    c("-l", "--scan-lables"),
+    type = "logical",
+    dest = "scanlables",
+    action="store_true",
+    default = FALSE,
+    help = "Scan variable labels when checking for PII"
   )
 )
 
@@ -66,6 +74,7 @@ path = opt$path
 
 # Set strict
 strict = opt$strict
+scan_labels = opt$scanlables
 
 # Create prinf function
 printf <- function(...)
@@ -237,7 +246,7 @@ for (file in files) {
       # Compare string to var, ignoring case
       if (grepl(string, var, ignore.case = TRUE)) {
         FOUND <- TRUE
-      } else {
+      } else if (scanlables) {
         # If no possible PII found in variable name, check label, ignoring case
         if (grepl(string, varlab, ignore.case = TRUE)) {
           FOUND <- TRUE
