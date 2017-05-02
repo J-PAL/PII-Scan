@@ -42,11 +42,34 @@ option_list = list(
     metavar = "PATH"
   ),
   make_option(
+    c("-q", "--quiet"),
+    type = "logical",
+    action="store_true",
+    default = FALSE,
+    help = "Silent operation; do not diplay possible PII to the screen"
+  ),
+  make_option(
+    "--no-output",
+    dest = "nooutput",
+    type = "logical",
+    action="store_true",
+    default = FALSE,
+    help = "Do not output search results to csv file"
+  ),
+  make_option(
+    c("-o", "--output-file"),
+    dest = "outputfile",
+    type = "character",
+    default = "PII_output.csv",
+    metavar = "FILE",
+    help = "Write csv of possible PII to FILE [default: %default]"
+  ),
+  make_option(
     c("-s", "--strict"),
     type = "logical",
     action="store_true",
     default = FALSE,
-    help = "Use stric matching when comparing strings. For example, match 'lat' but not 'latin'."
+    help = "Use stric matching when comparing strings. For example, match 'lat' but not 'latin'"
   ),
   make_option(
     c("-l", "--scan-lables"),
@@ -62,7 +85,6 @@ opt_parser = OptionParser(usage = "usage: %prog --path PATH [options]", option_l
 
 opt = parse_args(opt_parser)
 
-
 # Make sure path is give as option
 if (is.null(opt$path)) {
   print_help(opt_parser)
@@ -72,8 +94,10 @@ if (is.null(opt$path)) {
 # Set path
 path = opt$path
 
-# Set strict
+# Set options
 strict = opt$strict
+quiet = opt$quiet
+outputCSV = !opt$nooutput
 scan_labels = opt$scanlables
 
 # Set PII status
@@ -143,9 +167,9 @@ files = list.files(path,
                    recursive = TRUE)
 
 # Initialize output csv
-cat(
+if (outputCSV) cat(
   "file,var,varlabel,samp1,samp2,samp3,samp4,samp5",
-  file = "PII_output.csv",
+  file = outputfile,
   sep = "\n",
   append = FALSE
 )
@@ -259,21 +283,21 @@ for (file in files) {
 
     if (FOUND) {
       PII_Found <- TRUE
-      printf("Possible PII found in %s:\n", file)
+      if (!quiet) printf("Possible PII found in %s:\n", file)
 
       # Print warning, and first five data values
-      printf("\tPossible PII in variable \"%s\":\n", var)
+      if (!quiet) printf("\tPossible PII in variable \"%s\":\n", var)
 
       # Print first five values
       for (i in 1:5) {
-        printf("\t\tRow %d value: %s\n", i, data[i, var])
+        if (!quiet) printf("\t\tRow %d value: %s\n", i, data[i, var])
       } # for ( i in 1:5 )
 
       # Print newline for readability
-      printf("\n")
+      if (!quiet) printf("\n")
 
       # Write to csv file
-      cat(
+      if (outputCSV) cat(
         paste (
           file,
           var,
@@ -286,7 +310,7 @@ for (file in files) {
           sep = ",",
           collapse = NULL
         ),
-        file = "PII_output.csv",
+        file = outputfile,
         sep = "\n",
         append = TRUE
       )
