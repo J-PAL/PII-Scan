@@ -22,7 +22,7 @@ options(warn = -1)
 package.check <- lapply(
   packages,
   FUN = function(x) {
-    if ((!require(x, character.only = TRUE, quietly = TRUE, 
+    if ((!require(x, character.only = TRUE, quietly = TRUE,
                   warn.conflicts = FALSE))) {
       stop("Package ", x, " not found and is required.", call. = FALSE)
     }
@@ -47,6 +47,14 @@ option_list = list(
     action="store_true",
     default = FALSE,
     help = "Use stric matching when comparing strings. For example, match 'lat' but not 'latin'."
+  ),
+  make_option(
+    c("-l", "--scan-lables"),
+    type = "logical",
+    dest = "scanlables",
+    action="store_true",
+    default = FALSE,
+    help = "Scan variable labels when checking for PII"
   )
 )
 
@@ -66,6 +74,7 @@ path = opt$path
 
 # Set strict
 strict = opt$strict
+scan_labels = opt$scanlables
 
 # Set PII status
 PII_Found <- FALSE
@@ -173,7 +182,7 @@ for (file in files) {
              var.labels <- attr(data, "var.labels")
              return(NA)
            })
-           
+
          },
 
          # Open SAS files
@@ -207,21 +216,11 @@ for (file in files) {
   # Loop over variable names in file
   for (var in names(data)) {
     FOUND <- FALSE
-    for (string in pii_strings) {
-      
-      # Match on word boundary if strict
-      if (strict) {
-        string <- paste("\b",string,"\b")
-      }
-      
-      # Compare string to var, ignoring case
-      if (grepl(string, var, ignore.case = TRUE)) {
-        FOUND <- TRUE
-      }
-    }
 
-    # Create in-loop variable that contains varlabel information, add 1 to variable count
+    # Variable count for var.labels index
     v <- v + 1
+
+    # Get label for variable by type
     switch(type,
            dta = {
              varlab <- var.labels[v]
@@ -233,12 +232,30 @@ for (file in files) {
              varlab <- var.labels[v]
            },
            csv ={
-           	 varlab <- var.labels[v]
+             varlab <- var.labels[v]
            },
            {
              printf("Unknown file type %s: %s\n", ext, file)
              stop()
            })
+
+    for (string in pii_strings) {
+
+      # Match on word boundary if strict
+      if (strict) {
+        string <- paste("\b",string,"\b")
+      }
+
+      # Compare string to var, ignoring case
+      if (grepl(string, var, ignore.case = TRUE)) {
+        FOUND <- TRUE
+      } else if (scan_labels) {
+        # If no possible PII found in variable name, check label, ignoring case
+        if (grepl(string, varlab, ignore.case = TRUE)) {
+          FOUND <- TRUE
+        }
+      }
+    }
 
     if (FOUND) {
       PII_Found <- TRUE
