@@ -98,6 +98,7 @@ path = opt$path
 strict = opt$strict
 quiet = opt$quiet
 outputCSV = !opt$nooutput
+outputfile = opt$outputfile
 scan_labels = opt$scanlables
 
 # Set PII status
