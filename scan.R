@@ -22,7 +22,7 @@ options(warn = -1)
 package.check <- lapply(
   packages,
   FUN = function(x) {
-    if ((!require(x, character.only = TRUE, quietly = TRUE, 
+    if ((!require(x, character.only = TRUE, quietly = TRUE,
                   warn.conflicts = FALSE))) {
       stop("Package ", x, " not found and is required.", call. = FALSE)
     }
@@ -170,7 +170,7 @@ for (file in files) {
              var.labels <- attr(data, "var.labels")
              return(NA)
            })
-           
+
          },
 
          # Open SAS files
@@ -204,10 +204,10 @@ for (file in files) {
   # Loop over variable names in file
   for (var in names(data)) {
     FOUND <- FALSE
-    
+
     # Variable count for var.labels index
     v <- v + 1
-    
+
     # Get label for variable by type
     switch(type,
            dta = {
@@ -226,14 +226,14 @@ for (file in files) {
              printf("Unknown file type %s: %s\n", ext, file)
              stop()
            })
-    
+
     for (string in pii_strings) {
-      
+
       # Match on word boundary if strict
       if (strict) {
         string <- paste("\b",string,"\b")
       }
-      
+
       # Compare string to var, ignoring case
       if (grepl(string, var, ignore.case = TRUE)) {
         FOUND <- TRUE
