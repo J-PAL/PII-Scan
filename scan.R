@@ -302,7 +302,7 @@ for (file in files) {
         paste (
           file,
           var,
-          varlab,
+          gsub(",","",varlab),
           data[1, var],
           data[2, var],
           data[3, var],
