@@ -331,7 +331,7 @@ for (file in files) {
 if ( PII_Found ) {
   if (outputCSV) {
     rownames(possible_pii) <- NULL
-    write.csv(possible_pii, file = outputfile",quote=FALSE, row.names = FALSE)
+    write.csv(possible_pii, file = outputfile,quote=FALSE, row.names = FALSE)
   }
   quit(save = "no", status = 10, runLast = FALSE)
 } else {
