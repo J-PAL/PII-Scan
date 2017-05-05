@@ -169,10 +169,18 @@ files = list.files(path,
 
 # Initialize output csv
 if (outputCSV) cat(
-  "file,var,varlabel,samp1,samp2,samp3,samp4,samp5",
-  file = outputfile,
-  sep = "\n",
-  append = FALSE
+  # Create data frame to hold PII matches
+  possible_pii <-
+    data.frame(
+      "file" = character(0),
+      "var" = character(0),
+      "varlabel" = character(0),
+      "samp1" = character(0),
+      "samp2" = character(0),
+      "samp3" = character(0),
+      "samp4" = character(0),
+      "samp5" = character(0)
+    )
 )
 
 # Loop over files
@@ -297,30 +305,49 @@ for (file in files) {
       # Print newline for readability
       if (!quiet) printf("\n")
 
-      # Write to csv file
-      if (outputCSV) cat(
-        paste (
-          file,
-          var,
-          gsub(",","",varlab),
-          data[1, var],
-          data[2, var],
-          data[3, var],
-          data[4, var],
-          data[5, var],
-          sep = ",",
-          collapse = NULL
-        ),
-        file = outputfile,
-        sep = "\n",
-        append = TRUE
+      new_row <- data_frame(
+        file = paste(file),
+        var = paste(var),
+        varlabel = paste(varlab),
+        samp1 = paste(data[1, var]),
+        samp2 = paste(data[2, var]),
+        samp3 = paste(data[3, var]),
+        samp4 = paste(data[4, var]),
+        samp5 = paste(data[5, var])
       )
+      rownames(new_row) <- NULL
+
+      # Add to possible_pii data frame
+      possible_pii <- rbind(possible_pii, new_row)
+
+      # Write to csv file
+      if (outputCSV) {
+        # Create data frame without row names
+        new_row <- data_frame(
+          file = paste(file),
+          var = paste(var),
+          varlabel = paste(varlab),
+          samp1 = paste(data[1, var]),
+          samp2 = paste(data[2, var]),
+          samp3 = paste(data[3, var]),
+          samp4 = paste(data[4, var]),
+          samp5 = paste(data[5, var])
+        )
+        rownames(new_row) <- NULL
+
+        # Add to possible_pii data frame
+        possible_pii <- rbind(possible_pii, new_row)
+      }
 
     } # if ( var %in% pii_strings )
   } # for ( var in names( data ))
 } # for ( file in files )
 
 if ( PII_Found ) {
+  if (outputCSV) {
+    rownames(possible_pii) <- NULL
+    write.csv(possible_pii, file = outputfile",quote=FALSE, row.names = FALSE)
+  }
   quit(save = "no", status = 10, runLast = FALSE)
 } else {
   quit(save = "no", status = 0, runLast = FALSE)
