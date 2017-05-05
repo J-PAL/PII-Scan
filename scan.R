@@ -305,21 +305,6 @@ for (file in files) {
       # Print newline for readability
       if (!quiet) printf("\n")
 
-      new_row <- data_frame(
-        file = paste(file),
-        var = paste(var),
-        varlabel = paste(varlab),
-        samp1 = paste(data[1, var]),
-        samp2 = paste(data[2, var]),
-        samp3 = paste(data[3, var]),
-        samp4 = paste(data[4, var]),
-        samp5 = paste(data[5, var])
-      )
-      rownames(new_row) <- NULL
-
-      # Add to possible_pii data frame
-      possible_pii <- rbind(possible_pii, new_row)
-
       # Write to csv file
       if (outputCSV) {
         # Create data frame without row names
