@@ -168,9 +168,9 @@ files = list.files(path,
                    recursive = TRUE)
 
 # Initialize output csv
-if (outputCSV) cat(
+if (outputCSV) {
   # Create data frame to hold PII matches
-  possible_pii <-
+  csv_headers <-
     data.frame(
       "file" = character(0),
       "var" = character(0),
@@ -181,7 +181,8 @@ if (outputCSV) cat(
       "samp4" = character(0),
       "samp5" = character(0)
     )
-)
+  write.csv(csv_headers, file = outputfile, quote=FALSE, row.names = FALSE)
+}
 
 # Loop over files
 for (file in files) {
@@ -318,10 +319,7 @@ for (file in files) {
           samp4 = paste(data[4, var]),
           samp5 = paste(data[5, var])
         )
-        rownames(new_row) <- NULL
-
-        # Add to possible_pii data frame
-        possible_pii <- rbind(possible_pii, new_row)
+        write.table(new_row, file=outputfile, quote=TRUE, append=TRUE, row.names=FALSE, col.names=FALSE,  sep=",")
       }
 
     } # if ( var %in% pii_strings )
@@ -329,10 +327,6 @@ for (file in files) {
 } # for ( file in files )
 
 if ( PII_Found ) {
-  if (outputCSV) {
-    rownames(possible_pii) <- NULL
-    write.csv(possible_pii, file = outputfile,quote=FALSE, row.names = FALSE)
-  }
   quit(save = "no", status = 10, runLast = FALSE)
 } else {
   quit(save = "no", status = 0, runLast = FALSE)
