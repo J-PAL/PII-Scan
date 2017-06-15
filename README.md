@@ -4,7 +4,7 @@ Scan.R searches all Stata (.dta), SAS (.sas7bdat), SPSS (.sav), and comma-separa
 
 ## Instructions
 
-To execute the script, type the following in the command line, "Rscript scan.R --path=[Target]", replacing [Target] with the folder containing the data to scan. An excel spreadsheet titled "PII_output" will be saved in the current working directory for your review.
+To execute the script, type `Rscript scan.R --path=[Target]` into the commadn line, replacing [Target] with the folder containing the data to scan. An excel spreadsheet titled "PII_output" will be saved in the current working directory for your review.
 
 ## Requirements
 
