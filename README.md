@@ -59,7 +59,7 @@ Please use the [issue tracker](https://github.com/J-PAL/PII-Scan/issues) for all
 
 ## License
 
-See license file.
+See [license file](LICENSE.txt).
 
 ## Thanks
 Special thanks to IPA for their [How to Search Datasets for Personally Identifiable Information](http://www.poverty-action.org/sites/default/files/Guideline_How-to-Search-Datasets-for-PII.pdf) document which inspired this project.
