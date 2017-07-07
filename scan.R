@@ -1,17 +1,11 @@
 # List of required packages
-#   foreign: Read Stata version 5 - 12 files
-#   haven::read_dta Read Stata version 8 - 14 files
-#   haven::read_sas Read SAS files (sas7bdat files and accompanying)
-#   haven::read_sav Read SPSS files (sas7bdat files and accompanying)
-#   readr::read_csv Read csv files
 #   optparse: command line options/arguments
+#   rio: load files as data frame
 #   tools: extract file extension
-packages = c("haven",
-             "foreign",
-             "readr",
-             "dplyr",
+packages = c("dplyr",
              "purrr",
              "optparse",
+             "rio",
              "tools")
 
 # Suppress warnings
@@ -199,79 +193,19 @@ for (file in files) {
   # Get file type
   type <- file_ext(file)
 
-  # Use correct read function to open file, ignore missing value labels.
-  switch(type,
-
-         # Open Stata files
-         dta = {
-           tryCatch({
-             data <- haven::read_dta(file)
-             cols <- attr(data, "names")
-             var.labels <- data %>%
-               map_at(cols, attr, "label")
-           },
-           error = function(cond) {
-             data <- foreign::read.dta(file, warn.missing.labels = FALSE)
-             cols <- attr(data, "names")
-             var.labels <- attr(data, "var.labels")
-             return(NA)
-           })
-
-         },
-
-         # Open SAS files
-         sas7bdat = {
-           data <- haven::read_sas(file)
-           cols <- attr(data, "names")
-           var.labels <- cols
-         },
-
-         # Open SPSS files
-         sav = {
-           data <- haven::read_spss(file)
-           cols <- attr(data, "names")
-           var.labels <- data %>%
-             map_at(cols, attr, "label")
-         },
-
-         # Open CSV files
-         csv = {
-           data <- readr::read_csv(file, col_names = TRUE, col_types = cols())
-           cols <- attr(data, "names")
-           var.labels <- cols
-         },
-
-         # Warn and exit about unknown file types
-         {
-           printf("Unknown file type %s: %s\n", ext, file)
-           stop()
-         })
+  # Read file using rio
+  data <- import(file)
+  
+  # Move variable-level attributes to the data frame level
+  gather_attrs(data)
 
   # Loop over variable names in file
-  for (var in names(data)) {
+  for (varname in names(data)) {
+    varlabel <- attr(data[[varname]],"label")
     FOUND <- FALSE
 
     # Variable count for var.labels index
     v <- v + 1
-
-    # Get label for variable by type
-    switch(type,
-           dta = {
-             varlab <- var.labels[v]
-           },
-           sas7bdat = {
-             varlab <- var.labels[v]
-           },
-           sav = {
-             varlab <- var.labels[v]
-           },
-           csv ={
-             varlab <- var.labels[v]
-           },
-           {
-             printf("Unknown file type %s: %s\n", ext, file)
-             stop()
-           })
 
     for (string in pii_strings) {
 
@@ -281,11 +215,11 @@ for (file in files) {
       }
 
       # Compare string to var, ignoring case
-      if (grepl(string, var, ignore.case = TRUE)) {
+      if (grepl(string, varname, ignore.case = TRUE)) {
         FOUND <- TRUE
       } else if (scan_labels) {
         # If no possible PII found in variable name, check label, ignoring case
-        if (grepl(string, varlab, ignore.case = TRUE)) {
+        if (grepl(string, varlabel, ignore.case = TRUE)) {
           FOUND <- TRUE
         }
       }
@@ -296,11 +230,18 @@ for (file in files) {
       if (!quiet) printf("Possible PII found in %s:\n", file)
 
       # Print warning, and first five data values
-      if (!quiet) printf("\tPossible PII in variable \"%s\":\n", var)
+      if (!quiet) {
+        if (is.null(varlabel)) {
+          message <- paste("\"",varname,"\"",sep="")
+        } else {
+          message <- paste("\"",varname,"\" with label \"",varlabel,"\"", sep="")
+        }
+        printf("\tPossible PII in variable %s:\n", message)
+      }
 
       # Print first five values
       for (i in 1:5) {
-        if (!quiet) printf("\t\tRow %d value: %s\n", i, data[i, var])
+        if (!quiet) printf("\t\tRow %d value: %s\n", i, data[i, varname])
       } # for ( i in 1:5 )
 
       # Print newline for readability
@@ -311,13 +252,13 @@ for (file in files) {
         # Create data frame without row names
         new_row <- data_frame(
           file = paste(file),
-          var = paste(var),
-          varlabel = paste(varlab),
-          samp1 = paste(data[1, var]),
-          samp2 = paste(data[2, var]),
-          samp3 = paste(data[3, var]),
-          samp4 = paste(data[4, var]),
-          samp5 = paste(data[5, var])
+          var = paste(varname),
+          varlabel = paste( if (is.null(varlabel)) "" else varlabel),
+          samp1 = paste(data[1, varname]),
+          samp2 = paste(data[2, varname]),
+          samp3 = paste(data[3, varname]),
+          samp4 = paste(data[4, varname]),
+          samp5 = paste(data[5, varname])
         )
         write.table(new_row, file=outputfile, quote=TRUE, append=TRUE, row.names=FALSE, col.names=FALSE,  sep=",")
       }
