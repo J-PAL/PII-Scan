@@ -9,7 +9,7 @@ To execute the script, type `Rscript scan.R --path=[Target]` into the commadn li
 ## Requirements
 
 * R must be installed on the local system. Installers can be downloaded at http://cran.us.r-project.org.
-* The haven, foreign, readr, dplyr, readstata13, purrr, optparse and tools packages are required. To install missing packages, run install.packages("PACKAGE_NAME") where PACKAGE_NAME is the name of the package to install. Scan.R will warn if any of these packages are missing.
+* The dplyr, purrr, optparse, rio and tools packages are required. To install missing packages, run install.packages("PACKAGE_NAME") where PACKAGE_NAME is the name of the package to install. Scan.R will warn if any of these packages are missing.
 
 ## Exit Codes
 scan.R will exit with a value of 10 (ten) when possible PII is found or a value of 0 (zero) when no PII is identified.
