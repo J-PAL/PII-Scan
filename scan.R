@@ -123,7 +123,10 @@ pii_strings_locations <-
     "location",
     "house",
     "compound",
-    "panchayat"
+    "panchayat",
+    "territory",
+    "municipality",
+    "precinct"
 
   )
 pii_strings_other <-
