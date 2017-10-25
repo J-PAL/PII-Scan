@@ -52,6 +52,9 @@ scan.R searches variables and labels for the following strings:
  * url
  * village
  * wife
+ * territory
+ * municipality
+ * precinct
 
 ## Support
 
