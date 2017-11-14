@@ -40,7 +40,7 @@ option_list = list(
     type = "logical",
     action="store_true",
     default = FALSE,
-    help = "Silent operation; do not diplay possible PII to the screen"
+    help = "Silent operation; do not display possible PII to the screen"
   ),
   make_option(
     "--no-output",
