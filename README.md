@@ -1,10 +1,10 @@
 ## Synopsis
 
-Scan.R searches all Stata (.dta), SAS (.sas7bdat), SPSS (.sav), and comma-separated values (.csv) files found in the specified diectory for variables that may contain personally identifiable information (PII) using strings that commonly appear as part of variable names or labels that contain PII. (Note: Scan.R does not search labels in .csv files.) Results are displayed to the screen and saved to a comma-separated values file in the current working directory containing the variables and data flagged as potential PII.
+Scan.R searches all Stata (.dta), SAS (.sas7bdat), SPSS (.sav), and comma-separated values (.csv) files found in the specified directory for variables that may contain personally identifiable information (PII) using strings that commonly appear as part of variable names or labels that contain PII. (Note: Scan.R does not search labels in .csv files.) Results are displayed to the screen and saved to a comma-separated values file in the current working directory containing the variables and data flagged as potential PII.
 
 ## Instructions
 
-To execute the script, type `Rscript scan.R --path=[Target]` into the commadn line, replacing [Target] with the folder containing the data to scan. An excel spreadsheet titled "PII_output" will be saved in the current working directory for your review.
+To execute the script, type `Rscript scan.R --path=[Target]` into the command line, replacing [Target] with the folder containing the data to scan. An excel spreadsheet titled "PII_output" will be saved in the current working directory for your review.
 
 ## Requirements
 
