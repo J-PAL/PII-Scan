@@ -118,7 +118,7 @@ pii_strings_locations <-
     "address",
     "gps",
     "lat",
-    "log",
+    "lon",
     "coord",
     "location",
     "house",

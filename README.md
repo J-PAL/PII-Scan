@@ -40,7 +40,7 @@ scan.R searches variables and labels for the following strings:
  * lat
  * lc
  * location
- * log
+ * lon
  * mother
  * network
  * panchayat
