@@ -128,8 +128,7 @@ pii_strings_locations <-
     "panchayat",
     "territory",
     "municipality",
-    "precinct",
-
+    "precinct"
   )
 pii_strings_other <-
   c(
