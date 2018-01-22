@@ -109,10 +109,12 @@ pii_strings_dates <- c("birth", "birthday", "bday")
 pii_strings_locations <-
   c(
     "district",
+    "city",
     "country",
     "subcountry",
     "parish",
-    "lc",
+    "loc",
+    "street",
     "village",
     "community",
     "address",
@@ -126,7 +128,7 @@ pii_strings_locations <-
     "panchayat",
     "territory",
     "municipality",
-    "precinct"
+    "precinct",
 
   )
 pii_strings_other <-
