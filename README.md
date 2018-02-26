@@ -21,40 +21,7 @@ The script was written to audit data files for personally identifiable informati
 ## Search Strings
 
 scan.R searches variables and labels for the following strings:
- * address
- * beneficiary
- * census
- * child
- * community
- * compound
- * coord
- * country
- * district
- * email
- * father
- * fax
- * gender
- * gps
- * house
- * husband
- * lat
- * lc
- * location
- * lon
- * mother
- * network
- * panchayat
- * parish
- * school
- * sex
- * social
- * subcountry
- * url
- * village
- * wife
- * territory
- * municipality
- * precinct
+ address, beneficiary, census, child, community, compound, coord, country, district, email, father, fax, gender, gps, house, husband, lat, lc, location, lon, mother, network, panchayat, parish, school, sex, social, subcountry, url, village, wife, territory, municipality, precinct
 
 ## Support
 
