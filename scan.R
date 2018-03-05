@@ -66,12 +66,12 @@ option_list = list(
     help = "Use stric matching when comparing strings. For example, match 'lat' but not 'latin'"
   ),
   make_option(
-    c("-l", "--scan-lables"),
+    c("-nl", "--nolabels"),
     type = "logical",
-    dest = "scanlables",
+    dest = "noscanlables",
     action="store_true",
     default = FALSE,
-    help = "Scan variable labels when checking for PII"
+    help = "Do not scan variable labels when checking for PII"
   )
 )
 
@@ -93,7 +93,7 @@ strict = opt$strict
 quiet = opt$quiet
 outputCSV = !opt$nooutput
 outputfile = opt$outputfile
-scan_labels = opt$scanlables
+no_scan_lables = opt$noscanlables
 
 # Set PII status
 PII_Found <- FALSE
@@ -105,7 +105,7 @@ printf <- function(...)
 # Strings to look for in variable names
 pii_strings_names <-
   c("name", "fname", "lname", "first_name", "last_name")
-pii_strings_dates <- c("birth", "birthday", "bday")
+pii_strings_dates <- c("birth", "birthday", "bday", "dob")
 pii_strings_locations <-
   c(
     "district",
@@ -131,7 +131,8 @@ pii_strings_locations <-
     "panchayat",
     "territory",
     "municipality",
-    "precinct"
+    "precinct",
+    "block"
   )
 pii_strings_other <-
   c(
@@ -149,9 +150,10 @@ pii_strings_other <-
     "mother",
     "wife",
     "father",
-    "husband"
+    "husband",
+    "phone",
+    "spouse"
   )
-# removed "ip"
 
 # Create single list of all strings, removing duplicates
 pii_strings <-
@@ -187,56 +189,56 @@ if (outputCSV) {
 
 # Loop over files
 for (file in files) {
-
+  
   # Initialize variable count
   v <- 0
-
+  
   # Create full path to file
   file <- file.path(path,file)
-
+  
   # Get absolute path to file for cleaner output
   file <- normalizePath(file)
-
+  
   # Get file type
   type <- file_ext(file)
-
+  
   # Read file using rio
   data <- import(file)
   
   # Move variable-level attributes to the data frame level
   gather_attrs(data)
-
+  
   # Loop over variable names in file
   for (varname in names(data)) {
     varlabel <- attr(data[[varname]],"label")
     FOUND <- FALSE
-
+    
     # Variable count for var.labels index
     v <- v + 1
-
+    
     for (string in pii_strings) {
-
+      
       # Match on word boundary if strict
       if (strict) {
         string <- paste("\b",string,"\b")
       }
-
+      
       # Compare string to var, ignoring case
       if (grepl(string, varname, ignore.case = TRUE)) {
         FOUND <- TRUE
-      } else if (scan_labels) {
+      } else if ((!is.null(varlabel)) & !(no_scan_lables)) {
         # If no possible PII found in variable name, check label, ignoring case
         if (grepl(string, varlabel, ignore.case = TRUE)) {
           FOUND <- TRUE
         }
       }
     }
-
+    
     if (FOUND) {
       PII_Found <- TRUE
       if (!quiet) printf("Possible PII found in %s:\n", file)
-
-      # Print warning, and first five data values
+      
+      # Print warning and first five non-missing, unique values:
       if (!quiet) {
         if (is.null(varlabel)) {
           message <- paste("\"",varname,"\"",sep="")
@@ -245,15 +247,29 @@ for (file in files) {
         }
         printf("\tPossible PII in variable %s:\n", message)
       }
-
+      
       # Print first five values
+      #Remove blanks from variable - output is all columns, varname + all others
+      data_no_blanks <- data[data[varname]!="",]
+      
+      #Select just the current variable:
+      var_no_blanks <- data_no_blanks[varname]
+      
+      #Select unique values of the variable:
+      var_no_blanks_unique <- unique(var_no_blanks)
+      
+      #Remove NA values from vector (will only paste NA values if there are fewer than 5 unique, non-missing values)
+      var_no_blanks_unique_nona <- na.omit(var_no_blanks_unique)
+      
       for (i in 1:5) {
-        if (!quiet) printf("\t\tRow %d value: %s\n", i, data[i, varname])
+        if ((!quiet) & (!is.null(var_no_blanks_unique_nona[i,1])) & (!is.na(var_no_blanks_unique_nona[i,1]))) {
+          printf("\t\tSamp %d value: %s\n", i, var_no_blanks_unique_nona[i,1])
+        }
       } # for ( i in 1:5 )
-
+      
       # Print newline for readability
       if (!quiet) printf("\n")
-
+      
       # Write to csv file
       if (outputCSV) {
         # Create data frame without row names
@@ -261,15 +277,15 @@ for (file in files) {
           file = paste(file),
           var = paste(varname),
           varlabel = paste( if (is.null(varlabel)) "" else varlabel),
-          samp1 = paste(data[1, varname]),
-          samp2 = paste(data[2, varname]),
-          samp3 = paste(data[3, varname]),
-          samp4 = paste(data[4, varname]),
-          samp5 = paste(data[5, varname])
+          samp1 = paste(var_no_blanks_unique_nona[1,1]),
+          samp2 = paste(var_no_blanks_unique_nona[2,1]),
+          samp3 = paste(var_no_blanks_unique_nona[3,1]),
+          samp4 = paste(var_no_blanks_unique_nona[4,1]),
+          samp5 = paste(var_no_blanks_unique_nona[5,1])
         )
         write.table(new_row, file=outputfile, quote=TRUE, append=TRUE, row.names=FALSE, col.names=FALSE,  sep=",")
       }
-
+      
     } # if ( var %in% pii_strings )
   } # for ( var in names( data ))
 } # for ( file in files )

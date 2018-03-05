@@ -6,6 +6,13 @@ Scan.R searches all Stata (.dta), SAS (.sas7bdat), SPSS (.sav), and comma-separa
 
 To execute the script, type `Rscript scan.R --path=[Target]` into the command line, replacing [Target] with the folder containing the data to scan. An excel spreadsheet titled "PII_output" will be saved in the current working directory for your review.
 
+##### Options
+* `--quiet`: Silent operation; do not display possible PII to the screen
+* `--no-output`: Do not output search results to CSV file
+* `--output-file=output_filename.csv`: Write csv of possible PII to file "output_filename.csv" instead of "PII_output.csv"
+* `--strict`: Use strict matching when comparing strings. For example, match "lat" but not "latin"
+* `--nolabels`: Do not scan variable labels for PII search terms
+
 ## Requirements
 
 * R must be installed on the local system. Installers can be downloaded at http://cran.us.r-project.org.
@@ -21,7 +28,7 @@ The script was written to audit data files for personally identifiable informati
 ## Search Strings
 
 scan.R searches variables and labels for the following strings:
- address, beneficiary, census, child, community, compound, coord, country, district, email, father, fax, gender, gps, house, husband, lat, lc, location, lon, mother, network, panchayat, parish, school, sex, social, subcountry, url, village, wife, territory, municipality, precinct
+ name, fname, lname, first_name, last_name, birth, birthday, bday, dob, district, city, country, subcountry, parish, loc, street, village, community, address, gps, degree, minute, second, lat, lon, coord, location, house, compound, panchayat, territory, municipality, precinct, block, school, social, network, census, gender, sex, fax, email, url, child, beneficiary, mother, wife, father, husband, phone, spouse
 
 ## Support
 
