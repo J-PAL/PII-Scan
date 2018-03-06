@@ -132,7 +132,8 @@ pii_strings_locations <-
     "territory",
     "municipality",
     "precinct",
-    "block"
+    "block",
+    "zip"
   )
 pii_strings_other <-
   c(
@@ -152,7 +153,9 @@ pii_strings_other <-
     "father",
     "husband",
     "phone",
-    "spouse"
+    "spouse",
+    "daughter",
+    "son"
   )
 
 # Create single list of all strings, removing duplicates
