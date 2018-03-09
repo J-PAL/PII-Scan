@@ -252,9 +252,6 @@ for (file in files) {
       }
       
       # Print first five values
-      #Convert variable to character (fixes problem with variables read as dates):
-      data[varname]<-as.character(data[varname])
-      
       #Remove blanks from variable - output is all columns, varname + all others
       data_no_blanks <- data[data[varname]!="",]
       
