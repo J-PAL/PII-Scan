@@ -34,6 +34,16 @@ scan.R searches variables and labels for the following strings:
 
 ## Support
 
+Running this script on a Windows machine may result in the following error:
+~~~~
+Error in df_parse_dta_file(spec, encoding) :
+  Failed to parse [pathname]: Unable to allocate memory.
+Calls: import ... standardize_attributes -> read_dta -> df_parse_dta_file -> .Call
+Execution halted
+~~~~
+
+If you receive this error, remove the current version of the R package "Haven" and install the 1.1.0 version as a local zip file. The older version can be downloaded at: https://mran.microsoft.com/snapshot/2017-11-01/bin/windows/contrib/3.5/.
+
 Please use the [issue tracker](https://github.com/J-PAL/PII-Scan/issues) for all support requests.
 
 ## License

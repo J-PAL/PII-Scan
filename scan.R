@@ -251,22 +251,25 @@ for (file in files) {
         printf("\tPossible PII in variable %s:\n", message)
       }
       
-      # Print first five values
-      #Remove blanks from variable - output is all columns, varname + all others
-      data_no_blanks <- data[data[varname]!="",]
+      #Select the current variable column:
+      data_col <- data[varname]
+      
+      #Update the column to be character values:
+      data_col[varname] <- as.character(data_col[[varname]])
       
       #Select just the current variable:
-      var_no_blanks <- data_no_blanks[varname]
+      var_only <- data_col[varname]
       
       #Select unique values of the variable:
-      var_no_blanks_unique <- unique(var_no_blanks)
+      var_unique <- unique(var_only)
       
       #Remove NA values from vector (will only paste NA values if there are fewer than 5 unique, non-missing values)
-      var_no_blanks_unique_nona <- na.omit(var_no_blanks_unique)
+      var_unique_nona <- na.omit(var_unique)
       
+      # Print first five values
       for (i in 1:5) {
-        if ((!quiet) & (!is.null(var_no_blanks_unique_nona[i,1])) & (!is.na(var_no_blanks_unique_nona[i,1]))) {
-          printf("\t\tSamp %d value: %s\n", i, var_no_blanks_unique_nona[i,1])
+        if ((!quiet) & (!is.null(var_unique_nona[i,1])) & (!is.na(var_unique_nona[i,1]))) {
+          printf("\t\tSamp %d value: %s\n", i, var_unique_nona[i,1])
         }
       } # for ( i in 1:5 )
       
@@ -280,11 +283,11 @@ for (file in files) {
           file = paste(file),
           var = paste(varname),
           varlabel = paste( if (is.null(varlabel)) "" else varlabel),
-          samp1 = paste(var_no_blanks_unique_nona[1,1]),
-          samp2 = paste(var_no_blanks_unique_nona[2,1]),
-          samp3 = paste(var_no_blanks_unique_nona[3,1]),
-          samp4 = paste(var_no_blanks_unique_nona[4,1]),
-          samp5 = paste(var_no_blanks_unique_nona[5,1])
+          samp1 = paste(var_unique_nona[1,1]),
+          samp2 = paste(var_unique_nona[2,1]),
+          samp3 = paste(var_unique_nona[3,1]),
+          samp4 = paste(var_unique_nona[4,1]),
+          samp5 = paste(var_unique_nona[5,1])
         )
         write.table(new_row, file=outputfile, quote=TRUE, append=TRUE, row.names=FALSE, col.names=FALSE,  sep=",")
       }
