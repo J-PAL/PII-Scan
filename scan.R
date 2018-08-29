@@ -85,6 +85,11 @@ if (is.null(opt$path)) {
   stop("A search path must be specified.", call. = FALSE)
 }
 
+# Make sure path is for a directory
+if (!dir.exists(opt$path)) {
+  stop("Path must secify a directory.", call. = FALSE)
+}
+
 # Set path
 path = opt$path
 
